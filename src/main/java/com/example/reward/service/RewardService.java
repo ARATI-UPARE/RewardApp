@@ -1,59 +1,65 @@
 package com.example.reward.service;
 
-import com.example.reward.model.Transaction;
-import com.example.reward.repository.TransactionRepository;
+import java.time.LocalDate;
+import java.time.Month;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.stereotype.Service;
 
-import java.time.Month;
-import java.util.*;
+import com.example.reward.entity.Transaction;
+import com.example.reward.repository.TransactionRepository;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class RewardService {
 
-    private final TransactionRepository repository;
+	private final TransactionRepository transactionRepository;
 
-    public RewardService(TransactionRepository repository) {
-        this.repository = repository;
-    }
-    
-    
-    public Map<String, Object> getRewards(String customerName) {
+	public int calculatePoints(double amount) {
 
-        List<Transaction> transactions = repository.findByCustomerName(customerName);
+		int points = 0;
 
-        Map<Month, Integer> monthlyPoints = new HashMap<>();
-        int totalPoints = 0;
+		if (amount > 100) {
+			points += (int) ((amount - 100) * 2);
+			points += 50;
+		} else if (amount > 50) {
+			points += (int) (amount - 50);
+		}
 
-        for (Transaction t : transactions) {
-            int points = calculatePoints(t.getAmount());
-            Month month = t.getTransactionDate().getMonth();
+		return points;
+	}
 
-            monthlyPoints.put(month,
-                    monthlyPoints.getOrDefault(month, 0) + points);
+	// Monthly reward calculation (last 3 months)
+	public Map<String, Integer> getMonthlyRewards(Long userId) {
 
-            totalPoints += points;
-        }
+		LocalDate now = LocalDate.now();
+		LocalDate threeMonthsAgo = now.minusMonths(3);
 
-        Map<String, Object> result = new HashMap<>();
-        result.put("customer", customerName);
-        result.put("monthlyPoints", monthlyPoints);
-        result.put("totalPoints", totalPoints);
+		List<Transaction> transactions = transactionRepository.findByUserIdAndTransactionDateAfter(userId,
+				threeMonthsAgo);
 
-        return result;
-    }
+		Map<String, Integer> monthlyRewards = new LinkedHashMap<>();
 
+		for (Transaction tx : transactions) {
 
-    private int calculatePoints(double amount) {
-        int points = 0;
+			Month month = tx.getTransactionDate().getMonth();
+			String monthName = month.toString();
+			monthlyRewards.put(monthName, monthlyRewards.getOrDefault(monthName, 0) + tx.getRewardPoints());
+		}
 
-        if (amount > 100) {
-            points += (amount - 100) * 2;
-            points += 50;
-        } else if (amount > 50) {
-            points += (amount - 50);
-        }
+		return monthlyRewards;
+	}
 
-        return points;
-    }
+	// Total reward calculation
 
+	public int getTotalRewards(Long userId) {
+
+		List<Transaction> transactions = transactionRepository.findByUserId(userId);
+
+		return transactions.stream().mapToInt(Transaction::getRewardPoints).sum();
+	}
 }
