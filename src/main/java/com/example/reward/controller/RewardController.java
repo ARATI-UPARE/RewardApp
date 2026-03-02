@@ -18,7 +18,7 @@ public class RewardController {
 		return ResponseEntity.ok(total);
 	}
 
-	@GetMapping("/{userId}/monthly")
+	@GetMapping("/monthly/{userId}")
 	public ResponseEntity<?> getMonthlyRewards(@PathVariable Long userId) {
 
 		return ResponseEntity.ok(rewardService.getMonthlyRewards(userId));

@@ -1,6 +1,7 @@
 package com.example.reward.service;
 
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import org.springframework.stereotype.Service;
 import com.example.reward.entity.Transaction;
@@ -25,7 +26,7 @@ public class TransactionService {
 	}
 
 
-	public Transaction addTransaction(Long userId, Double amount) {
+	public Transaction addTransaction(Long userId, BigDecimal amount) {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));

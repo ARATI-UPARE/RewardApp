@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Optional;
 
@@ -36,7 +37,7 @@ class TransactionServiceTest {
 	@Test
 	void addTransaction_shouldSaveTransactionWithCorrectRewardPoints() {
 		Long userId = 1L;
-		Double amount = 120.0;
+		BigDecimal amount = new BigDecimal("120.0");
 
 		User user = new User();
 		user.setId(userId);
@@ -69,7 +70,7 @@ class TransactionServiceTest {
 	@Test
 	void addTransaction_shouldThrowExceptionWhenUserNotFound() {
 		Long userId = 999L;
-		Double amount = 50.0;
+		BigDecimal amount = new BigDecimal("50.09");
 
 		when(userRepository.findById(userId)).thenReturn(Optional.empty());
 

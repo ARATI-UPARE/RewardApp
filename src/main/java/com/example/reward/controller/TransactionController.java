@@ -2,6 +2,9 @@ package com.example.reward.controller;
 
 import com.example.reward.service.TransactionService;
 import lombok.RequiredArgsConstructor;
+
+import java.math.BigDecimal;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,7 +18,7 @@ public class TransactionController {
     @PostMapping("/{userId}")
     public ResponseEntity<?> addTransaction(
             @PathVariable Long userId,
-            @RequestParam Double amount) {
+            @RequestParam BigDecimal amount) {
 
         return ResponseEntity.ok(
                 transactionService.addTransaction(userId, amount));

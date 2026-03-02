@@ -1,5 +1,6 @@
 package com.example.reward.service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.LinkedHashMap;
@@ -19,17 +20,16 @@ public class RewardService {
 
 	private final TransactionRepository transactionRepository;
 
-	public int calculatePoints(double amount) {
-
+	public int calculatePoints(BigDecimal amount) {
 		int points = 0;
 
-		if (amount > 100) {
-			points += (int) ((amount - 100) * 2);
+		if (amount.compareTo(new BigDecimal("100")) > 0) {
+			// (amount - 100) * 2
+			BigDecimal extra = amount.subtract(new BigDecimal("100")).multiply(new BigDecimal("2"));
+			points += extra.intValue(); // convert BigDecimal to int
 			points += 50;
-		} else if (amount > 50) {
-			points += (int) (amount - 50);
+		} else if (amount.compareTo(new BigDecimal("100")) < 0) {
 		}
-
 		return points;
 	}
 
@@ -54,8 +54,7 @@ public class RewardService {
 		return monthlyRewards;
 	}
 
-	// Total reward calculation
-
+	// Total Reward calculation (for last 3 months)
 	public int getTotalRewards(Long userId) {
 
 		List<Transaction> transactions = transactionRepository.findByUserId(userId);

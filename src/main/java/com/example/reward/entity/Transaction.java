@@ -2,6 +2,7 @@ package com.example.reward.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -11,24 +12,25 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 public class Transaction {
 
 	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    private Double amount;
+	private BigDecimal amount;
 
-    private LocalDate transactionDate;
+	private LocalDate transactionDate;
 
-    private Integer rewardPoints;
-    
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    @JsonBackReference
-    private User user;
+	private Integer rewardPoints;
 
-    public Transaction() {
- 		super();
- 	}
-	public Transaction(Long id, Double amount, LocalDate date, Integer rewardPoints, User user) {
+	@ManyToOne
+	@JoinColumn(name = "user_id")
+	@JsonBackReference
+	private User user;
+
+	public Transaction() {
+		super();
+	}
+
+	public Transaction(Long id, BigDecimal amount, LocalDate date, Integer rewardPoints, User user) {
 		this.id = id;
 		this.amount = amount;
 		this.transactionDate = date;
@@ -43,11 +45,12 @@ public class Transaction {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	public Double getAmount() {
+
+	public BigDecimal getAmount() {
 		return amount;
 	}
 
-	public void setAmount(Double amount) {
+	public void setAmount(BigDecimal amount) {
 		this.amount = amount;
 	}
 
@@ -74,5 +77,5 @@ public class Transaction {
 	public void setRewardPoints(Integer rewardPoints) {
 		this.rewardPoints = rewardPoints;
 	}
-    
+
 }
