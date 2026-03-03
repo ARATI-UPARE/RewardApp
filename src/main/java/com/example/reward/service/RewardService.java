@@ -33,7 +33,7 @@ public class RewardService {
 		return points;
 	}
 
-	// Monthly reward calculation (last 3 months)
+	// Monthly reward calculation
 	public Map<String, Integer> getMonthlyRewards(Long userId) {
 
 		LocalDate now = LocalDate.now();
@@ -56,8 +56,9 @@ public class RewardService {
 
 	// Total Reward calculation (for last 3 months)
 	public int getTotalRewards(Long userId) {
-
-		List<Transaction> transactions = transactionRepository.findByUserId(userId);
+		LocalDate now = LocalDate.now();
+		LocalDate threeMonthsAgo = now.minusMonths(3);
+		List<Transaction> transactions = transactionRepository.findByUserIdAndTransactionDateAfter(userId,threeMonthsAgo);
 
 		return transactions.stream().mapToInt(Transaction::getRewardPoints).sum();
 	}
